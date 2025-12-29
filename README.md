@@ -22,10 +22,12 @@ office.bat
 ### **Шаг 2: Выбор программ**
 Выберите программы, которые хотите установить
 ```bash
-[1] Word      [2] Excel      [3] PowerPoint
-[4] Outlook   [5] Access     [6] Publisher
-[7] OneNote   [8] OneDrive   [9] Teams
-[10] Groove   [11] Lync
+[1] Word       [2] Excel
+[3] PowerPoint [4] Outlook
+[5] Access     [6] Publisher
+[7] OneNote    [8] OneDrive
+[9] Teams      [10] Groove   
+[11] Lync
 ```
 
 ### **Пример выбора:** 
