@@ -267,61 +267,65 @@ function Start-Installation {
     Write-Host ""
     Write-Host "Установка Microsoft Office начата..." -ForegroundColor Green
     Write-Host ""
-    Write-Host "Это может занять несколько минут." -ForegroundColor Yellow
-    Write-Host "Пожалуйста, не закрывайте окно." -ForegroundColor Yellow
+    
+    Write-Host "1. Скачивание Office Deployment Tool..." -ForegroundColor Gray
+    $odtUrl = "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16910-33602.exe"
+    $odtPath = "$env:TEMP\ODTSetup.exe"
+    
+    try {
+        Invoke-WebRequest -Uri $odtUrl -OutFile $odtPath -UseBasicParsing
+        Write-Host "   ✓ ODT скачан" -ForegroundColor Green
+    } catch {
+        Write-Host "   ✗ Ошибка скачивания ODT" -ForegroundColor Red
+        Write-Host "   Скачайте вручную: https://aka.ms/ODT" -ForegroundColor Yellow
+        pause
+        exit 1
+    }
+    
+    Write-Host "2. Извлечение файлов установки..." -ForegroundColor Gray
+    $extractDir = "$env:TEMP\OfficeSetup"
+    Remove-Item -Path $extractDir -Recurse -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType Directory -Path $extractDir -Force | Out-Null
+    
+    Start-Process -FilePath $odtPath -ArgumentList "/extract:`"$extractDir`" /quiet" -Wait -NoNewWindow
+    Write-Host "   ✓ Файлы извлечены" -ForegroundColor Green
+    
+    Write-Host "3. Подготовка установки..." -ForegroundColor Gray
+    $sourceSetup = Join-Path $extractDir "setup.exe"
+    $destSetup = "setup.exe"
+    
+    if (Test-Path $sourceSetup) {
+        Copy-Item -Path $sourceSetup -Destination $destSetup -Force
+        Write-Host "   ✓ Установщик готов" -ForegroundColor Green
+    } else {
+        Write-Host "   ✗ Ошибка: setup.exe не найден" -ForegroundColor Red
+        pause
+        exit 1
+    }
+    
+    Write-Host "4. Запуск установки Office..." -ForegroundColor Gray
+    Write-Host "   Это может занять 10-30 минут" -ForegroundColor Yellow
+    Write-Host "   Не закрывайте это окно!" -ForegroundColor Red
     Write-Host ""
     
     try {
-        $currentDir = Get-Location
-        $setupPath = Join-Path $currentDir "setup.exe"
+        $process = Start-Process -FilePath $destSetup -ArgumentList "/configure configuration.xml" -Wait -NoNewWindow -PassThru
         
-        Write-Host "Поиск setup.exe..." -ForegroundColor Gray
+        Remove-Item -Path $odtPath -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $extractDir -Recurse -Force -ErrorAction SilentlyContinue
         
-        if (Test-Path $setupPath) {
-            Write-Host "Найден setup.exe в текущей папке" -ForegroundColor Green
-            Write-Host "Запуск установки..." -ForegroundColor Green
-            Write-Host ""
-            
-            $process = Start-Process -FilePath $setupPath -ArgumentList "/configure configuration.xml" -Wait -NoNewWindow -PassThru
-            
-            if ($process.ExitCode -eq 0) {
-                Write-Host "Установка завершена успешно!" -ForegroundColor Green
-            } else {
-                Write-Host "Установка завершена с кодом: $($process.ExitCode)" -ForegroundColor Yellow
-            }
+        if ($process.ExitCode -eq 0) {
+            Write-Host "   ✓ Установка завершена успешно!" -ForegroundColor Green
         } else {
-            Write-Host "ОШИБКА: setup.exe не найден!" -ForegroundColor Red
-            Write-Host ""
-            Write-Host "Для установки Office требуется файл setup.exe" -ForegroundColor Yellow
-            Write-Host ""
-            Write-Host "Что делать:" -ForegroundColor Yellow
-            Write-Host "1. Скачайте официальный Office Deployment Tool" -ForegroundColor Yellow
-            Write-Host "2. Извлеките файл setup.exe в ту же папку, где находится этот скрипт" -ForegroundColor Yellow
-            Write-Host "3. Запустите установку снова" -ForegroundColor Yellow
-            Write-Host ""
-            Write-Host "Или укажите путь к setup.exe вручную" -ForegroundColor Yellow
-            
-            $manualPath = Read-Host "`nВведите полный путь к setup.exe (или Enter для отмены)"
-            
-            if ($manualPath -and (Test-Path $manualPath)) {
-                Write-Host "Запуск установки из указанного пути..." -ForegroundColor Green
-                $process = Start-Process -FilePath $manualPath -ArgumentList "/configure configuration.xml" -Wait -NoNewWindow -PassThru
-                
-                if ($process.ExitCode -eq 0) {
-                    Write-Host "Установка завершена успешно!" -ForegroundColor Green
-                } else {
-                    Write-Host "Установка завершена с кодом: $($process.ExitCode)" -ForegroundColor Yellow
-                }
-            } else {
-                Write-Host "Установка отменена." -ForegroundColor Red
-                Start-Sleep -Seconds 2
-            }
+            Write-Host "   ⚠ Установка завершена с кодом: $($process.ExitCode)" -ForegroundColor Yellow
         }
     } catch {
-        Write-Host "Ошибка при установке: $_" -ForegroundColor Red
-        Write-Host "Для продолжения нажмите клавишу ВВОД..." -ForegroundColor Yellow
-        pause
+        Write-Host "   ✗ Ошибка при установке: $_" -ForegroundColor Red
     }
+    
+    Write-Host ""
+    Write-Host "Для продолжения нажмите Enter..." -ForegroundColor Gray
+    pause
     
     Restore-Settings
 }
