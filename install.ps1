@@ -269,7 +269,7 @@ function Start-Installation {
     Write-Host ""
     
     Write-Host "1. Скачивание Office Deployment Tool..." -ForegroundColor Gray
-    $odtUrl = "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16910-33602.exe"
+    $odtUrl = "https://download.microsoft.com/download/6c1eeb25-cf8b-41d9-8d0d-cc1dbc032140/officedeploymenttool_19426-20170.exe"
     $odtPath = "$env:TEMP\ODTSetup.exe"
     
     try {
