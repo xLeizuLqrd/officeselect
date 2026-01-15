@@ -1,26 +1,25 @@
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-    $Host.UI.RawUI.WindowTitle = "Установщик Microsoft Office"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$Host.UI.RawUI.WindowTitle = "Установщик Microsoft Office"
 
-    function Show-ModeMenu {
-        Clear-Host
-        Write-Host @"
-            :::    :::       :::        ::::::::::       :::::::::::       :::::::::      :::    :::
-        :+:    :+:       :+:        :+:                  :+:                :+:       :+:    :+:
-        +:+  +:+        +:+        +:+                  +:+               +:+        +:+    +:+ 
-        +#++:+         +#+        +#++:++#             +#+              +#+         +#+    +:+  
-        +#+  +#+        +#+        +#+                  +#+             +#+          +#+    +#+   
-    #+#    #+#       #+#        #+#                  #+#            #+#           #+#    #+#    
-    ###    ###       ########## ##########       ###########       #########       ########      
-
-    ========================================
-        ВЫБОР РЕЖИМА УСТАНОВКИ
-    ========================================
-
-    [1] Полная установка (удалит старый Office)
-    [2] Добавить программы к существующему Office
-
-    ========================================
-    "@ -ForegroundColor Cyan
+function Show-ModeMenu {
+    Clear-Host
+    Write-Host "        :::    :::       :::        ::::::::::       :::::::::::       :::::::::      :::    :::" -ForegroundColor Cyan
+    Write-Host "       :+:    :+:       :+:        :+:                  :+:                :+:       :+:    :+:" -ForegroundColor Cyan
+    Write-Host "       +:+  +:+        +:+        +:+                  +:+               +:+        +:+    +:+ " -ForegroundColor Cyan
+    Write-Host "       +#++:+         +#+        +#++:++#             +#+              +#+         +#+    +:+  " -ForegroundColor Cyan
+    Write-Host "     +#+  +#+        +#+        +#+                  +#+             +#+          +#+    +#+   " -ForegroundColor Cyan
+    Write-Host "   #+#    #+#       #+#        #+#                  #+#            #+#           #+#    #+#    " -ForegroundColor Cyan
+    Write-Host "  ###    ###       ########## ##########       ###########       #########       ########      " -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "     ВЫБОР РЕЖИМА УСТАНОВКИ" -ForegroundColor White
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "[1] Полная установка (удалит старый Office)" -ForegroundColor Yellow
+    Write-Host "[2] Добавить программы к существующему Office" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host ""
         
         do {
             $mode = Read-Host "`nВыберите режим (1 или 2)"
